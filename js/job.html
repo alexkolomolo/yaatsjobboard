@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title></title>
+  <meta charset="utf-8">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css'>
+  <script src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js'></script>
+</head>
+
+<body>
+  <div id="page-content"></div>
+</body>
+
+<script>
+const BASE_URL = "http://192.168.0.109:3002";
+
+function showApplySummaryPanel(){
+    // hide a modal form 
+    $('#modalForm').modal('hide');
+    // show a panel with summary
+    document.getElementById("applySummary").innerHTML = `<div id="applySummary" class="msg msg-success msg-success-text"> <span class="glyphicon glyphicon glyphicon-ok"></span> You have succesfully applied for this job</div>`;
+    // clear modal form inputs
+    // document.getElementById("applyForm").reset();
+}
+
+// set up page content on document ready
+$(document).ready(function() { 
+
+  // get a jobId parameter from url
+  var url = window.location.toString();
+  var jobId = url.substring(url.indexOf("?id=")+4, url.length);
+
+  // get a job details from API
+  $.get(BASE_URL + "/api/user/jobs/display/" + jobId, function(data, status){
+      // change page title to job title from API
+      document.title = data.title;
+
+      // create a job details panel
+      var innerHTML = `
+      <div class="container">
+          <div class="jumbotron jumbotron-sm jumbotron-job-title">
+              <div class="row">
+                  <div class="col-sm-12 col-lg-12">
+                      <h1 class="h2">
+                          ${data.title}
+                      </h1>
+                  </div>
+              </div>
+          </div>
+      </div>
+      <div class="container">
+          <div class="row">
+              <div class="col-sm-4">
+                  <div class="well">
+                      <h3><i class="fa fa-envelope fa-1x"></i>Classification:</h3>
+                      <p>${data.classification}</p>
+                      <br />
+                      <br />
+                      <h3><i class="fa fa-home fa-1x"></i> Address:</h3>               
+                      <p>${data.location} ${data.country}</p>
+                      <br />
+                      <br />
+                      <h3><i class="fa fa-user fa-1x"></i>Company details:</h3>
+                      <p>${data.companyname}</p>
+                      <p>${data.companydetails}</p>
+                      <p>${data.consultantname}</p>
+                      <p>${data.consultantmail}</p>
+                      <br />
+                      <br />
+                      <h3><i class="fa fa-user fa-1x"></i>Salary:</h3>
+                      <p>${data.salary}</p>
+                  </div>
+              </div>
+              <div class="col-sm-8">
+                  <div id="applySummary"></div>
+                   <div class="well">
+                      ${data.content}
+                   </div>
+              </div>
+              <div class="btn btn-primary pull-right btn-right-panel" style="margin-right:15px;" data-toggle="modal" data-target=".bs-example-modal-lg">APPLY</div>
+              <iframe id="invisible" name="invisible" style="display:none;"></iframe>
+          </div>
+        </div>
+      </div>
+      `;
+
+      // add a modal form dialog for job applying
+      innerHTML += `
+         <div class="container">
+            <div class="row">
+                <div id="modalForm" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-body">
+                                <form target="invisible" id="applyForm" onsubmit="showApplySummaryPanel()"
+                                    action='${BASE_URL}/api/user/jobs/apply/${jobId}'
+                                    method='post'
+                                    encType="multipart/form-data">
+                                    <div class="form-group">
+                                        <label>Name</label>
+                                        <input required type="text" class="form-control" name="name" id="name" aria-describedby="name" placeholder="Enter your name"/>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Phone</label>
+                                        <input required type="number" class="form-control" name="phone" id="phone" aria-describedby="name" placeholder="Enter your phone number"/>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Country</label>
+                                        <input required type="text" class="form-control" name="country" id="country" aria-describedby="name" placeholder="Enter country"/>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Email address</label>
+                                        <input required type="email" class="form-control" name="mail" id="mail" aria-describedby="email" placeholder="Enter email"/>
+                                        <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Your CV</label>
+                                        <input required type="file" accept=".pdf,.PDF" class="form-control" name="cv" id="cv" aria-describedby="name" placeholder="Select a CV file"/>
+                                    </div>
+                                    <div class="form-check form-check-wrapper">
+                                        <label class="form-check-label">
+                                        <input type="checkbox" name="workAbroad" id="workAbroad" class="form-check-input"/>
+                                        I can work abroad
+                                        </label>
+                                    </div>
+                                    <button type="submit" name="cv" id="cv" class="btn btn-primary">APPLY</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>`;
+ 
+      // add job details HTML to div with id=page-content
+      document.getElementById("page-content").innerHTML = innerHTML;
+  });
+});
+</script>
+
+<style>
+/**************************
+custom CSS styles
+**************************/
+.table-jobs:hover { cursor: pointer; }
+.jumbotron-job-title { background-color:#F0F0F0;margin-top:2%;color:black; border: 2px solid #E8E8E8; }
+.btn-right-panel { margin-bottom: 100px; }
+.form-check-wrapper { margin-bottom: 20px; }
+
+/**************************
+summary panel styles
+**************************/
+.msg {
+background: #fefefe;
+color: #666666;
+font-weight: bold;
+font-size: small;
+padding: 12px;
+padding-left: 16px;
+border-top: solid 3px #CCCCCC;
+border-radius: 5px;
+margin-bottom: 10px;
+-webkit-box-shadow: 0 10px 10px -5px rgba(0,0,0,.08);
+-moz-box-shadow: 0 10px 10px -5px rgba(0,0,0,.08);
+box-shadow: 0 10px 10px -5px rgba(0,0,0,.08);
+}
+.msg-clear {
+    border-color: #fefefe;
+    -webkit-box-shadow: 0 7px 10px -5px rgba(0,0,0,.15);
+    -moz-box-shadow: 0 7px 10px -5px rgba(0,0,0,.15);
+    box-shadow: 0 7px 10px -5px rgba(0,0,0,.15);
+}
+.msg-info {
+    border-color: #b8dbf2;
+}
+.msg-success {
+    border-color: #339966;
+}
+.msg-warning {
+    border-color: rgba(255,165,0,.5);
+}
+.msg-danger {
+    border-color: #ec8282;
+}
+.msg-primary {
+    border-color: #9ca6f1;
+}
+.msg-magick {
+    border-color: #e0b8f2;
+}
+.msg-info-text {
+    color: #39b3d7;
+}
+.msg-success-text {
+    color: #339966;
+}
+.msg-warning-text {
+    color: #db9e34;
+}
+.msg-danger-text {
+    color: #c9302c;
+}
+.msg-primary-text {
+    color: rgba(47,106,215,.9);
+}
+.msg-magick-text {
+    color: #bb39d7;
+}
+</style>
