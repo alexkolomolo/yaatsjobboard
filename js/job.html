@@ -13,7 +13,7 @@
 </body>
 
 <script>
-const BASE_URL = "http://192.168.0.109:3002";
+const BASE_URL = "http://cobra5d.com/yaats";
 
 function showApplySummaryPanel(){
     // hide a modal form 
@@ -32,7 +32,7 @@ $(document).ready(function() {
   var jobId = url.substring(url.indexOf("?id=")+4, url.length);
 
   // get a job details from API
-  $.get(BASE_URL + "/api/user/jobs/display/" + jobId, function(data, status){
+  $.get(BASE_URL + "/user/jobs/display/" + jobId, function(data, status){
       // change page title to job title from API
       document.title = data.title;
 

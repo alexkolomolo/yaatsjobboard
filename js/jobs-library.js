@@ -1,4 +1,4 @@
-const BASE_URL = "http://192.168.0.109:3002";
+const BASE_URL = "http://cobra5d.com/yaats";
 
 // on document ready
 $(document).ready(function() {
@@ -7,7 +7,7 @@ $(document).ready(function() {
 
 // creates a HTML table filled with jobs from API and fires an event
 function setJobsTable() {
-    $.get(BASE_URL + "/api/user/jobs/display", function(data, status){
+    $.get(BASE_URL + "/user/jobs/display", function(data, status){
         // jobs array from json
         var jobs = data.jobs;
 
