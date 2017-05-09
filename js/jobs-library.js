@@ -29,7 +29,7 @@ function setJobsTable() {
                     <tr class='jobs-table-row' id='${jobs[i]._id}' onclick='showJobDetails(this.id)'>
                         <td class="col-md-4"> ${jobs[i].title}</td>
                         <td class="col-md-1">${jobs[i].location}</td>
-                        <td class="col-md-1">${jobs[i].posted}</td>
+                        <td class="col-md-2">${jobs[i].posted}</td>
                     </tr>`;
                 }
                 table +=
